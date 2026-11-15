@@ -47,7 +47,7 @@
 | Phase 1 | 自门控指纹 + 刀实现 + 静态自证 harness | ✅ 完成（harness 65/65 全绿：0627/0629 结构断言 + disable 回归 + 0625 负向 + 真链路 post 取证 + BasicVerifier 栈闸） |
 | Phase 2 | 实机验收（0627/0629 全套 + 回归矩阵） | ✅ 完成（**0.0.13 案结**：0629 判点菜单点击/相机/锁鼠+ESC 释放/游戏内左右键/resize/关窗自退/F11/皮肤全绿；0625-1917 回归局指纹直通、窗口正常起、游戏类零触碰） |
 | Phase 2.5 | CI（GitHub Actions + gradlew LF 行尾修复） | ✅ 绿 |
-| Phase 3 | GitHub Release（钉版 jar + sha256/size meta）+ 启动器侧接线 | 📋 |
+| Phase 3 | GitHub Release（钉版 jar + sha256/size meta） | ✅ 完成（[v0.0.13](https://github.com/CreatorCSIE/infdev-0627-deawt-fix/releases/tag/v0.0.13)：jar 397156B / sha256 `25ef556b…8015`；启动器接线按决策**不在本仓范围**，直链即取即用） |
 
 ---
 
@@ -95,9 +95,9 @@ infdev-windowfix-agent
 
 ---
 
-## 🔌 启动器侧集成（不在本仓，在 Attic Corner Launcher）
+## 🔌 启动器侧集成（不在本仓，按决策未接线）
 
-挂载表 `quirks.ts`（两条 AgentMount 单版本钉 0627/0629，排 legacyfix 之后尾注入）· 下载 `betacraft.ts` 新 `ensureWindowfix`（Release 直链 + sha256/size 校验）· 开关 `settings.ts` `infdevWindowfix?`（缺键 = true，intelFix 同语义）· 装配 `runtime.ts` 滤除 · UI `InstanceList.vue` checkbox · i18n 三语 · launch/storage 测试。
+挂载表 `quirks.ts`（两条 AgentMount 单版本钉 0627/0629，排 legacyfix 之后尾注入）· 下载 `betacraft.ts` 新 `ensureWindowfix`（Release 直链 + sha256/size 校验）· 开关 `settings.ts` `infdevWindowfix?`（缺键 = true，intelFix 同语义）· 装配 `runtime.ts` 滤除 · UI `InstanceList.vue` checkbox · i18n 三语 · launch/storage 测试。—— **本仓 Phase 3 以 Release 收口，以上为接线蓝图（候启动器侧另行立项）**；当前用法 = 手动 `-javaagent:<Release jar 路径>`。
 
 ---
 
