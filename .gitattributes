@@ -1,0 +1,8 @@
+# CI 教训（2026-11-15）：gradlew 曾以 CRLF 入库，Linux runner 上 shebang 变成
+# env: $'sh\r': No such file or directory（exit 127）。Unix 壳脚本一律钉 LF。
+gradlew text eol=lf
+*.sh text eol=lf
+# Windows 批处理保持 CRLF
+gradlew.bat text eol=crlf
+*.bat text eol=crlf
+*.jar binary
