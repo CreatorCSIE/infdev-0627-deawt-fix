@@ -42,4 +42,12 @@ shadowJar {
     }
 }
 
+// 静态自证 harness：生产路径 transform→toBytecode、单 loader -Xverify:all、结构断言。
+task harness(type: JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    main = 'com.atticcorner.windowfix.harness.StaticHarness'
+    jvmArgs '-Xverify:all'
+}
+
 // Iteration builds MUST run with --rerun-tasks (gradle incremental miss lesson; hash change != content change).
