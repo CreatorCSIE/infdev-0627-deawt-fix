@@ -53,7 +53,7 @@
 
 ## 💻 运行环境要求
 
-- **构建**：JDK 8（`C:\Program Files\Java\jdk1.8.0_202`）；Gradle wrapper 钉 **6.9.4** + shadow 插件 **6.1.0** + ASM **9.1**——与 legacyfix fork 同工具链，本地缓存可全离线构建。
+- **构建**：JDK 8（`JAVA_HOME` 指向本机任一 JDK 8 安装即可）；Gradle wrapper 钉 **6.9.4** + shadow 插件 **6.1.0** + ASM **9.1**——与 legacyfix fork 同工具链，本地缓存可全离线构建。
 - **运行**：游戏侧 Java 8；agent 为 shaded fat jar（ASM 已 relocate，不与 legacyfix 自带 ASM 冲突）。
 
 ---
