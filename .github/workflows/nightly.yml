@@ -6,6 +6,8 @@ name: Nightly
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '**.md'            # 文档改动不触发 nightly
   workflow_dispatch:
 
 permissions:
