@@ -34,9 +34,4 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon clean compileJava compileTestJava shadowJar
 
-      - name: Upload jar
-        uses: actions/upload-artifact@v4
-        with:
-          name: infdev-windowfix-CI
-          path: build/libs/infdev-windowfix-*.jar
-          if-no-files-found: error
+# 不上传 artifact —— 构建产物轨归 Nightly（push 触发、纯 artifact），CI 只做构建验证。
