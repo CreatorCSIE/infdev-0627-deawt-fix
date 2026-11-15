@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.atticcorner'
-version = '0.0.1'
+version = '0.0.13'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -18,6 +18,9 @@ dependencies {
     implementation 'org.ow2.asm:asm:9.1'
     implementation 'org.ow2.asm:asm-commons:9.1'
     implementation 'org.ow2.asm:asm-tree:9.1'
+    // §3d 迭代要求 1：CheckClassAdapter/BasicVerifier 栈收支验证（运行时 verify=true + harness）
+    implementation 'org.ow2.asm:asm-analysis:9.1'
+    implementation 'org.ow2.asm:asm-util:9.1'
 }
 
 jar {
@@ -48,6 +51,9 @@ task harness(type: JavaExec) {
     classpath = sourceSets.test.runtimeClasspath
     main = 'com.atticcorner.windowfix.harness.StaticHarness'
     jvmArgs '-Xverify:all'
+    if (project.hasProperty('postFix')) {
+        args "post=${project.property('postFix')}"
+    }
 }
 
 // Iteration builds MUST run with --rerun-tasks (gradle incremental miss lesson; hash change != content change).
