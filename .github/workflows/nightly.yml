@@ -1,11 +1,11 @@
 name: Nightly
 
-# 每晚构建 shadowJar，生成 sha256/size meta，发布/刷新 `nightly` 预发布标签。
+# push 到 main 时构建 shadowJar，生成 sha256/size meta，发布/刷新 `nightly` 预发布标签。
 # 钉版正式 Release 属 Phase 3，不在本流程。
 
 on:
-  schedule:
-    - cron: '0 0 * * *'   # 00:00 UTC = 08:00 北京时间
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
