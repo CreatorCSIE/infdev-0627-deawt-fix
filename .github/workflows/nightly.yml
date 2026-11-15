@@ -1,7 +1,7 @@
 name: Nightly
 
-# push 到 main 时构建 shadowJar，生成 sha256/size meta，发布/刷新 `nightly` 预发布标签。
-# 钉版正式 Release 属 Phase 3，不在本流程。
+# push 到 main 时构建 shadowJar，生成 sha256/size meta，上传为 workflow artifact（保留 14 天）。
+# 不发 nightly release/tag——钉版正式 Release 属 Phase 3（手动），不在本流程。
 
 on:
   push:
@@ -9,9 +9,6 @@ on:
     paths-ignore:
       - '**.md'            # 文档改动不触发 nightly
   workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
   nightly:
@@ -59,18 +56,3 @@ jobs:
             nightly-meta.txt
           if-no-files-found: error
           retention-days: 14
-
-      - name: Publish/update nightly prerelease
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          JAR="${{ steps.meta.outputs.jar }}"
-          TITLE="Nightly $(date -u +%Y-%m-%d)"
-          if gh release view nightly >/dev/null 2>&1; then
-            gh release upload nightly --clobber "$JAR" nightly-meta.txt
-            gh release edit nightly --title "$TITLE"
-          else
-            gh release create nightly --prerelease --title "$TITLE" \
-              --notes "Automated nightly build. Not a pinned release; see nightly-meta.txt for sha256/size. Do not wire into launcher mount table." \
-              "$JAR" nightly-meta.txt
-          fi
