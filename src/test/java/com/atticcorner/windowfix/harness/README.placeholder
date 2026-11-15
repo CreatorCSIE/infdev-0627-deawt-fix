@@ -1,0 +1,2 @@
+# 静态自证 harness（Phase 1）：生产路径 transform→toBytecode、单 loader -Xverify:all、
+# javap 断言新体在场 / 原解引用清零（案卷 §28/§30 断言样例移植）。

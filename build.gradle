@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
+}
+
+group = 'com.atticcorner'
+version = '0.0.1'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // ASM 9.x — bytecode surgery. Cached at 9.1; pinned here.
+    implementation 'org.ow2.asm:asm:9.1'
+    implementation 'org.ow2.asm:asm-commons:9.1'
+    implementation 'org.ow2.asm:asm-tree:9.1'
+}
+
+jar {
+    manifest {
+        attributes(
+            // premain entry; launcher expands `-javaagent:<path>=<gameDir>`, agent ignores the arg.
+            'Premain-Class': 'com.atticcorner.windowfix.WindowFixAgent',
+            'Can-Retransform-Classes': 'true'
+        )
+    }
+}
+
+shadowJar {
+    archiveBaseName.set('infdev-windowfix')
+    archiveClassifier.set('')          // -> infdev-windowfix-0.0.1.jar (filename pins the version)
+    relocate 'org.objectweb.asm', 'com.atticcorner.windowfix.shaded.asm'
+    manifest {
+        attributes(
+            'Premain-Class': 'com.atticcorner.windowfix.WindowFixAgent',
+            'Can-Retransform-Classes': 'true'
+        )
+    }
+}
+
+// Iteration builds MUST run with --rerun-tasks (gradle incremental miss lesson; hash change != content change).

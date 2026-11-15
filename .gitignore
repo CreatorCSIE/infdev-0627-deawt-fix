@@ -1,0 +1,16 @@
+# Gradle
+.gradle/
+build/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+out/
+
+# Compiled artifacts (release jars go to GitHub Releases, not the repo)
+*.class
+
+# OS
+Thumbs.db
+.DS_Store
