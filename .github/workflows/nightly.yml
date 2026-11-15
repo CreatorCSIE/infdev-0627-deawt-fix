@@ -1,0 +1,74 @@
+name: Nightly
+
+# 每晚构建 shadowJar，生成 sha256/size meta，发布/刷新 `nightly` 预发布标签。
+# 钉版正式 Release 属 Phase 3，不在本流程。
+
+on:
+  schedule:
+    - cron: '0 0 * * *'   # 00:00 UTC = 08:00 北京时间
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  nightly:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 8
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('build.gradle', 'gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Build
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon clean shadowJar
+
+      - name: Generate meta (sha256 + size)
+        id: meta
+        run: |
+          JAR=$(ls build/libs/infdev-windowfix-*.jar | head -n1)
+          {
+            echo "file=$(basename "$JAR")"
+            echo "sha256=$(sha256sum "$JAR" | cut -d' ' -f1)"
+            echo "size=$(stat -c%s "$JAR")"
+            echo "commit=${GITHUB_SHA}"
+            echo "built=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } > nightly-meta.txt
+          cat nightly-meta.txt
+          echo "jar=$JAR" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: infdev-windowfix-nightly
+          path: |
+            ${{ steps.meta.outputs.jar }}
+            nightly-meta.txt
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Publish/update nightly prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          JAR="${{ steps.meta.outputs.jar }}"
+          TITLE="Nightly $(date -u +%Y-%m-%d)"
+          if gh release view nightly >/dev/null 2>&1; then
+            gh release upload nightly --clobber "$JAR" nightly-meta.txt
+            gh release edit nightly --title "$TITLE"
+          else
+            gh release create nightly --prerelease --title "$TITLE" \
+              --notes "Automated nightly build. Not a pinned release; see nightly-meta.txt for sha256/size. Do not wire into launcher mount table." \
+              "$JAR" nightly-meta.txt
+          fi
